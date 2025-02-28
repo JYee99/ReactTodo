@@ -14,3 +14,7 @@
 - **프론트엔드**: React, Vite
 - **스타일링**: styled-components
 - **상태 관리**: useState, useEffect (추후 Redux 가능)
+
+### 개발 노션
+
+https://mint-dosa-022.notion.site/React-Todo-App-1a8f34d80bb6802cb17cd4a4537304e7?pvs=4
