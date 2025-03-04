@@ -69,6 +69,9 @@ export const ListText = styled.input`
   text-align: center;
   border: none;
   outline: none;
+
+  text-decoration: ${({ checked }) => (checked ? "line-through" : "none")};
+  opacity: ${({ checked }) => (checked ? "0.25" : "1")};
 `;
 export const BtnBox = styled.div`
   display: flex;
@@ -78,8 +81,9 @@ export const ListEditBtn = styled.button`
   font-size: 13px;
   font-weight: bold;
   margin-right: 10px;
+  pointer-events: ${({ checked }) => (checked ? "none" : "auto")};
   &:hover {
-    color: rgb(50, 184, 106);
+    color: ${({ checked }) => (checked ? "none" : "rgb(50, 184, 106)")};
   }
 `;
 export const ListDeleteBtn = styled.button`

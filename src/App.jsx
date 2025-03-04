@@ -1,12 +1,12 @@
 import "./App.css";
-import Form from "./components/Form";
+import Todo from "./components/Todo";
 import GlobalStyle from "./GlobalStyle";
 
 function App() {
   return (
     <>
       <GlobalStyle />
-      <Form />
+      <Todo />
     </>
   );
 }
