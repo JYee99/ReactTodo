@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as S from "./FormStyles";
 
 const TodoItem = ({
@@ -8,6 +8,7 @@ const TodoItem = ({
   handleEditInput,
   handleEdit,
   handleDelete,
+  masterCheck,
 }) => {
   // 여러 개의 input을 참조하기 위한 객체
   const inputRef = useRef(null);
@@ -16,7 +17,28 @@ const TodoItem = ({
       inputRef.current.focus();
     }
   }, [todo.edit]);
+  const [dateConfirm, setDateConfirm] = useState(false);
 
+  const newDate = new Date();
+  const newMon = newDate.getMonth() + 1;
+  const newDay = newDate.getDate();
+  const dayChecked = () => {
+    if (newMon > todo.date.mon) {
+      setDateConfirm(true);
+    } else if (newDay > todo.date.day) {
+      setDateConfirm(true);
+    }
+  };
+  useEffect(() => {
+    dayChecked();
+  }, []);
+  useEffect(() => {
+    if (masterCheck) {
+      handleChecked(todo.id, true);
+    } else {
+      handleChecked(todo.id, false);
+    }
+  }, [masterCheck]);
   return (
     <S.ListLi key={todo.id}>
       <S.ListCheckBox
@@ -24,7 +46,9 @@ const TodoItem = ({
         checked={todo.checked}
         onChange={() => handleChecked(todo.id)}
       />
-
+      <S.ListDate>
+        {todo.date.mon}월 {todo.date.day}일
+      </S.ListDate>
       <S.ListText
         ref={inputRef}
         id={todo.id}
@@ -33,6 +57,7 @@ const TodoItem = ({
         onChange={(e) => handleEditInput(e, todo.id)}
         maxLength={maxLength}
         checked={todo.checked}
+        readOnly={!todo.edit}
       />
 
       <S.BtnBox>
