@@ -13,6 +13,13 @@ const Todo = () => {
     },
   };
   const initialTodos = JSON.parse(localStorage.getItem("myTodos")) || [];
+  const initialCategories = [
+    { id: "high", value: "🔥 중요도 (최상)" },
+    { id: "upperMid", value: "🔴 중요도 (상)" },
+    { id: "mid", value: "🟡 중요도 (중)" },
+    { id: "lowerMid", value: "🟢 중요도 (하)" },
+    { id: "low", value: "🔵 중요도 (최하)" },
+  ];
 
   const maxLength = 15;
   const [todos, setTodos] = useState(initialTodos);
@@ -21,6 +28,7 @@ const Todo = () => {
   const inputRefs = useRef({});
   const [masterCheck, setMasterCheck] = useState(false);
   const [categoryVal, setCategoryVal] = useState("");
+  const [categories, setCategories] = useState(initialCategories);
 
   const [filteredTodos, setFilteredTodos] = useState(todos); // 필터링 목록 상태
   const isEditing = todos.some((todo) => todo.edit);
@@ -175,7 +183,7 @@ const Todo = () => {
           />
         </S.TodoContainer>
 
-        <SideBar />
+        <SideBar categories={categories} />
       </S.RootContainer>
     </>
   );

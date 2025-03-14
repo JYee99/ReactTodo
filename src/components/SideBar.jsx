@@ -1,7 +1,7 @@
 import React from "react";
 import * as S from "./FormStyles";
 
-const SideBar = () => {
+const SideBar = ({ categories }) => {
   const filters = [
     { id: "olders", value: "⏳ 기한 ▲" },
     { id: "newest", value: "⏳ 기한 ▼" },
@@ -10,6 +10,7 @@ const SideBar = () => {
     { id: "expired", value: "⏰ 기한 만료" },
     { id: "inProgress", value: "🔄 진행 중" },
   ];
+
   return (
     <S.SideBarContainer>
       <S.FilterContainer>
@@ -28,14 +29,14 @@ const SideBar = () => {
       <S.CategoryContainer>
         <S.CategoryTitle>CATEGORY</S.CategoryTitle>
         <S.FilterUl>
-          <S.CategoryList>
-            <S.FilterCheckbox type="checkbox" />
-            <S.SideBarLiText>오래된 순서</S.SideBarLiText>
-          </S.CategoryList>
-          <S.CategoryList>
-            <S.FilterCheckbox type="checkbox" />
-            <S.SideBarLiText>asd 순서</S.SideBarLiText>
-          </S.CategoryList>
+          {categories.map((list) => {
+            return (
+              <S.CategoryList>
+                <S.FilterCheckbox type="checkbox" name={list.id} />
+                <S.SideBarLiText>{list.value}</S.SideBarLiText>
+              </S.CategoryList>
+            );
+          })}
         </S.FilterUl>
       </S.CategoryContainer>
     </S.SideBarContainer>

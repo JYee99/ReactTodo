@@ -14,7 +14,7 @@ const TodoForm = ({
       <S.Form onSubmit={handleSubmit}>
         <S.InputContainer>
           <S.CategorieInput
-            placeholder="카테고리"
+            placeholder="카테고리 추가"
             value={categoryVal}
             onChange={handleCategoryChange}
           />
