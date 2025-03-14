@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import * as S from "./FormStyles";
 import TodoItem from "./TodoItem";
 
@@ -12,9 +12,6 @@ const TodoList = ({
   isEditing,
   masterCheck,
   handleMasterCheck,
-  categories,
-  handleSelected,
-  handleDoneFilter,
 }) => {
   return (
     <S.ListContainer>
@@ -24,21 +21,9 @@ const TodoList = ({
           checked={masterCheck}
           onChange={handleMasterCheck}
         />
-
-        <S.CategoriList name="donefilter" onChange={handleDoneFilter}>
-          <option value="all">전체 보기</option>
-          <option value="completed">완료만 보기</option>
-          <option value="incomplete">미완료만 보기</option>
-        </S.CategoriList>
-        <S.CategoriList name="categorie" onChange={handleSelected}>
-          {categories.map((item) => {
-            return (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            );
-          })}
-        </S.CategoriList>
+        <S.TopTextDate>기한</S.TopTextDate>
+        <S.TopTextTodos>할 일</S.TopTextTodos>
+        <S.TopText>수정 / 삭제</S.TopText>
       </S.TopContainer>
       <S.LiustUl>
         {todos.map((todo) => (

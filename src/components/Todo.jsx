@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import TodoForm from "./TodoForm";
 import TodoList from "./TodoList";
+import SideBar from "./SideBar";
+import * as S from "./FormStyles";
 
 const Todo = () => {
   const inputInitial = {
@@ -11,11 +13,6 @@ const Todo = () => {
     },
   };
   const initialTodos = JSON.parse(localStorage.getItem("myTodos")) || [];
-  const initialCategories = [
-    "날짜 ↑",
-    "날짜 ↓",
-    ...new Set(initialTodos.map((todo) => todo.categorie).filter(Boolean)),
-  ];
 
   const maxLength = 15;
   const [todos, setTodos] = useState(initialTodos);
@@ -23,9 +20,7 @@ const Todo = () => {
   // 여러 개의 input을 참조하기 위한 객체
   const inputRefs = useRef({});
   const [masterCheck, setMasterCheck] = useState(false);
-  const [categories, setCategories] = useState(initialCategories);
-  const [categorieVal, setCategorieVal] = useState("");
-  const [cateSelected, setCateSelected] = useState("");
+  const [categoryVal, setCategoryVal] = useState("");
 
   const [filteredTodos, setFilteredTodos] = useState(todos); // 필터링 목록 상태
   const isEditing = todos.some((todo) => todo.edit);
@@ -47,33 +42,24 @@ const Todo = () => {
       return;
     }
   };
-  const categorieAdd = () => {
-    setCategories((prev) => {
-      if (prev.includes(categorieVal)) {
-        return prev;
-      }
-      return [...prev, categorieVal];
-    });
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (checkLength(inputVal.todo.length) || inputVal.todo.trim() === "")
       return;
-    categorieAdd();
     const newTodo = {
       id: Math.random().toString(),
       todo: inputVal.todo,
       date: inputVal.date,
       checked: false,
       edit: false,
-      categorie: categorieVal,
+      category: categoryVal,
     };
     console.log(newTodo);
 
     setTodos((prev) => [newTodo, ...prev]);
     setInputVal(inputInitial);
-    setCategorieVal("");
+    setCategoryVal("");
   };
 
   const onChangeInput = (e) => {
@@ -158,52 +144,39 @@ const Todo = () => {
     });
   };
 
-  const handleCategorieChange = (e) => {
-    setCategorieVal(e.target.value);
+  const handleCategoryChange = (e) => {
+    setCategoryVal(e.target.value);
   };
 
-  const handleSelected = (e) => {
-    const selectedCate = e.target.value;
-    setCateSelected(selectedCate);
-  };
-  const handleDoneFilter = (e) => {
-    const selectedFilter = e.target.value;
-
-    if (selectedFilter === "all") {
-      setFilteredTodos(todos); // 전체 보기 (필터링 해제)
-    } else if (selectedFilter === "completed") {
-      setFilteredTodos(todos.filter((todo) => todo.checked)); // 완료된 항목만 보기
-    } else if (selectedFilter === "incomplete") {
-      setFilteredTodos(todos.filter((todo) => !todo.checked)); // 미완료 항목만 보기
-    }
-  };
   return (
     <>
-      <TodoForm
-        handleSubmit={handleSubmit}
-        onChangeInput={onChangeInput}
-        inputVal={inputVal}
-        onChangeDate={onChangeDate}
-        maxLength={maxLength}
-        categorieVal={categorieVal}
-        handleCategorieChange={handleCategorieChange}
-      />
-      <TodoList
-        todos={filteredTodos}
-        inputRefs={inputRefs}
-        maxLength={maxLength}
-        handleChecked={handleChecked}
-        handleEditInput={handleEditInput}
-        handleEdit={handleEdit}
-        handleDelete={handleDelete}
-        isEditing={isEditing}
-        masterCheck={masterCheck}
-        handleMasterCheck={handleMasterCheck}
-        categories={categories}
-        handleSelected={handleSelected}
-        cateSelected={cateSelected}
-        handleDoneFilter={handleDoneFilter}
-      />
+      <S.RootContainer>
+        <S.TodoContainer>
+          <TodoForm
+            handleSubmit={handleSubmit}
+            onChangeInput={onChangeInput}
+            inputVal={inputVal}
+            onChangeDate={onChangeDate}
+            maxLength={maxLength}
+            categoryVal={categoryVal}
+            handleCategoryChange={handleCategoryChange}
+          />
+          <TodoList
+            todos={filteredTodos}
+            inputRefs={inputRefs}
+            maxLength={maxLength}
+            handleChecked={handleChecked}
+            handleEditInput={handleEditInput}
+            handleEdit={handleEdit}
+            handleDelete={handleDelete}
+            isEditing={isEditing}
+            masterCheck={masterCheck}
+            handleMasterCheck={handleMasterCheck}
+          />
+        </S.TodoContainer>
+
+        <SideBar />
+      </S.RootContainer>
     </>
   );
 };

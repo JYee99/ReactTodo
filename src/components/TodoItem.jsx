@@ -22,14 +22,15 @@ const TodoItem = ({
   const newDate = new Date();
   const newMon = newDate.getMonth() + 1;
   const newDay = newDate.getDate();
-  const dayChecked = () => {
-    if (newMon > todo.date.mon) {
-      setDateConfirm(true);
-    } else if (newDay > todo.date.day) {
-      setDateConfirm(true);
-    }
-  };
+
   useEffect(() => {
+    const dayChecked = () => {
+      if (newMon > todo.date.mon) {
+        setDateConfirm(true);
+      } else if (newDay > todo.date.day) {
+        setDateConfirm(true);
+      }
+    };
     dayChecked();
   }, []);
   useEffect(() => {
@@ -46,8 +47,9 @@ const TodoItem = ({
         checked={todo.checked}
         onChange={() => handleChecked(todo.id)}
       />
-      <S.ListDate>
-        {todo.date.mon}월 {todo.date.day}일
+
+      <S.ListDate $dateConfirm={dateConfirm}>
+        {dateConfirm ? "기한 만료" : `${todo.date.mon}월 ${todo.date.day}일`}
       </S.ListDate>
       <S.ListText
         ref={inputRef}

@@ -1,12 +1,18 @@
-import { Select } from "@headlessui/react";
 import styled from "styled-components";
+
+export const RootContainer = styled.div`
+  display: flex;
+  width: 900px;
+  margin-top: 100px;
+  align-items: start;
+`;
+export const TodoContainer = styled.div``;
 
 export const Form = styled.form`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin-top: 100px;
   background-color: white;
   width: 600px;
   padding: 20px;
@@ -94,12 +100,23 @@ export const ListLi = styled.li`
 `;
 export const TopContainer = styled.div`
   display: flex;
+  justify-content: space-between;
+  width: 100%;
   margin: 0 10px;
   margin-bottom: 10px;
 `;
-
+export const TopText = styled.p`
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: bold;
+`;
+export const TopTextDate = styled(TopText)`
+  width: 55px;
+`;
+export const TopTextTodos = styled(TopText)`
+  width: 260px;
+`;
 export const ListCheckBox = styled.input`
-  width: 15px;
   cursor: pointer;
   margin: 0;
 `;
@@ -109,6 +126,9 @@ export const MasterCheckBox = styled(ListCheckBox)`
 `;
 export const ListDate = styled.span`
   font-size: 0.75rem;
+  text-align: center;
+  width: 55px;
+  color: ${({ $dateConfirm }) => ($dateConfirm ? "red" : "#222")};
 `;
 
 export const ListText = styled.input`
@@ -141,8 +161,58 @@ export const ListDeleteBtn = styled.button`
   }
 `;
 
-export const CategoriList = styled(Select)`
-  padding: 2px 5px;
-  border: none;
-  color: rgb(67, 127, 255);
+// sidbar
+export const SideBarContainer = styled.div`
+  padding: 20px 10px;
+  border-radius: 10px;
+  box-shadow: 3px 5px 10px rgba(0, 0, 0, 0.15);
+  display: flex;
+  margin-left: 20px;
+  width: 400px;
+  justify-content: space-between;
+  background-color: white;
+`;
+export const FilterCheckbox = styled(ListCheckBox)`
+  margin-right: 5px;
+`;
+export const FilterContainer = styled.div`
+  width: 50%;
+  border-right: 1px solid rgba(0, 0, 0, 0.15);
+`;
+export const FilterTitle = styled.h2`
+  font-size: 0.9rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 10px;
+`;
+export const FilterUl = styled.ul`
+  display: flex;
+  flex-direction: column;
+`;
+export const FilterList = styled.li`
+  display: flex;
+  padding: 2px 7px;
+  margin: 0;
+`;
+export const CategoryContainer = styled.div`
+  width: 50%;
+`;
+export const CategoryTitle = styled.h2`
+  font-size: 0.9rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 10px;
+`;
+export const CategoryUl = styled.ul`
+  display: flex;
+  flex-direction: column;
+`;
+export const CategoryList = styled.li`
+  margin: 0;
+  padding-left: 17px;
+  display: flex;
+`;
+export const SideBarLiText = styled.p`
+  margin: 0;
+  font-size: 0.8rem;
 `;

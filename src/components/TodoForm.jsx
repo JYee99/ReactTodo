@@ -6,8 +6,8 @@ const TodoForm = ({
   inputVal,
   maxLength,
   onChangeDate,
-  categorieVal,
-  handleCategorieChange,
+  categoryVal,
+  handleCategoryChange,
 }) => {
   return (
     <>
@@ -15,8 +15,8 @@ const TodoForm = ({
         <S.InputContainer>
           <S.CategorieInput
             placeholder="카테고리"
-            value={categorieVal}
-            onChange={handleCategorieChange}
+            value={categoryVal}
+            onChange={handleCategoryChange}
           />
           <S.DateContainer>
             <S.MonInput
