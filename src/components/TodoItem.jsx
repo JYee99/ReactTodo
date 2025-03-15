@@ -9,30 +9,31 @@ const TodoItem = ({
   handleEdit,
   handleDelete,
   masterCheck,
+  currentDate,
 }) => {
   // 여러 개의 input을 참조하기 위한 객체
   const inputRef = useRef(null);
+  const [dateConfirm, setDateConfirm] = useState(false);
+
   useEffect(() => {
     if (todo.edit && inputRef.current) {
       inputRef.current.focus();
     }
   }, [todo.edit]);
-  const [dateConfirm, setDateConfirm] = useState(false);
-
-  const newDate = new Date();
-  const newMon = newDate.getMonth() + 1;
-  const newDay = newDate.getDate();
 
   useEffect(() => {
+    const todoMon = Number(todo.date.mon);
+    const todoDay = Number(todo.date.day);
     const dayChecked = () => {
-      if (newMon > todo.date.mon) {
+      if (currentDate.mon > todoMon) {
         setDateConfirm(true);
-      } else if (newDay > todo.date.day) {
+      } else if (currentDate.mon === todoMon && currentDate.day > todoDay) {
         setDateConfirm(true);
       }
     };
     dayChecked();
   }, []);
+
   useEffect(() => {
     if (masterCheck) {
       handleChecked(todo.id, true);
@@ -46,13 +47,15 @@ const TodoItem = ({
         type="checkbox"
         checked={todo.checked}
         onChange={() => handleChecked(todo.id)}
+        $dateConfirm={dateConfirm}
+        disabled={dateConfirm}
       />
 
       <S.ListDate $dateConfirm={dateConfirm}>
         {dateConfirm ? "기한 만료" : `${todo.date.mon}월 ${todo.date.day}일`}
       </S.ListDate>
+      <S.ListCategory>{todo.category}</S.ListCategory>
       <S.ListText
-        ref={inputRef}
         id={todo.id}
         type="text"
         value={todo.todo}
@@ -60,6 +63,7 @@ const TodoItem = ({
         maxLength={maxLength}
         checked={todo.checked}
         readOnly={!todo.edit}
+        $dateConfirm={dateConfirm}
       />
 
       <S.BtnBox>
@@ -67,6 +71,7 @@ const TodoItem = ({
           onClick={() => handleEdit(todo.id)}
           disabled={todo.checked}
           checked={todo.checked}
+          $dateConfirm={dateConfirm}
         >
           {todo.edit ? "DONE" : "EDIT"}
         </S.ListEditBtn>

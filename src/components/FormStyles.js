@@ -2,25 +2,28 @@ import styled from "styled-components";
 
 export const RootContainer = styled.div`
   display: flex;
-  width: 900px;
+  width: 930px;
   margin-top: 100px;
   align-items: start;
 `;
 export const TodoContainer = styled.div``;
 
+// form
 export const Form = styled.form`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   background-color: white;
-  width: 600px;
+  width: 630px;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 3px 5px 10px rgba(0, 0, 0, 0.15);
 `;
 export const InputContainer = styled.div`
   display: flex;
+  justify-content: space-between;
+  width: 100%;
 `;
 export const FormLabel = styled.label`
   opacity: 0.5;
@@ -31,6 +34,7 @@ export const InputStyle = styled.input`
   outline: none;
   border: none;
   padding: 5px 10px;
+  height: 45px;
   border-radius: 10px;
   background-color: rgb(214, 242, 255);
   color: rgb(67, 127, 255);
@@ -74,11 +78,52 @@ export const FormButton = styled.button`
     color: rgb(67, 127, 255);
   }
 `;
+export const DropDownContainer = styled.div`
+  position: relative;
+  width: 150px;
+  font-size: 0.85rem;
+  user-select: none;
+  color: #222;
+`;
+export const SelectedCategory = styled.div`
+  height: 45px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background: #d6f2ff;
+  border-radius: 5px;
+  cursor: pointer;
+`;
+export const Arrow = styled.div`
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+  transform: ${({ $isOpen }) => ($isOpen ? "rotate(180deg)" : "rotate(0deg)")};
+`;
+export const DropdownUl = styled.div`
+  position: absolute;
+  width: 100%;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-top: 160px;
+  left: 0;
+  list-style: none;
+  padding: 0;
+  z-index: 10;
+`;
+export const DropDownList = styled.div`
+  padding: 10px;
+  cursor: pointer;
+  &:hover {
+    background: #ddd;
+  }
+`;
 
 // list style
 export const ListContainer = styled.div`
   background-color: white;
-  width: 600px;
+  width: 630px;
   padding: 20px 15px;
   border-radius: 10px;
   margin-top: 10px;
@@ -116,6 +161,9 @@ export const TopTextDate = styled(TopText)`
 export const TopTextTodos = styled(TopText)`
   width: 260px;
 `;
+export const TopBtnText = styled(TopText)`
+  padding-right: 20px;
+`;
 export const ListCheckBox = styled.input`
   cursor: pointer;
   margin: 0;
@@ -130,15 +178,21 @@ export const ListDate = styled.span`
   width: 55px;
   color: ${({ $dateConfirm }) => ($dateConfirm ? "red" : "#222")};
 `;
-
+export const ListCategory = styled.span`
+  font-size: 0.75rem;
+`;
 export const ListText = styled.input`
   width: 260px;
   text-align: center;
   border: none;
   outline: none;
 
-  text-decoration: ${({ checked }) => (checked ? "line-through" : "none")};
-  opacity: ${({ checked }) => (checked ? "0.25" : "1")};
+  text-decoration: ${({ checked, $dateConfirm }) =>
+    $dateConfirm ? "none" : checked ? "line-through" : "none"};
+
+  color: ${({ $dateConfirm }) => ($dateConfirm ? "red" : "#222")};
+  opacity: ${({ checked, $dateConfirm }) =>
+    $dateConfirm ? "1" : checked ? "0.5" : "1"};
 `;
 export const BtnBox = styled.div`
   display: flex;
@@ -148,7 +202,8 @@ export const ListEditBtn = styled.button`
   font-size: 13px;
   font-weight: bold;
   margin-right: 10px;
-  pointer-events: ${({ checked }) => (checked ? "none" : "auto")};
+  pointer-events: ${({ checked, $dateConfirm }) =>
+    $dateConfirm ? "none" : checked ? "none" : "auto"};
   &:hover {
     color: ${({ checked }) => (checked ? "none" : "rgb(50, 184, 106)")};
   }

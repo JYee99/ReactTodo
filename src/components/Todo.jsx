@@ -20,23 +20,35 @@ const Todo = () => {
     { id: "lowerMid", value: "🟢 중요도 (하)" },
     { id: "low", value: "🔵 중요도 (최하)" },
   ];
-
+  const filters = [
+    { id: "olders", value: "⏳ 기한 ▲" },
+    { id: "newest", value: "⏳ 기한 ▼" },
+    { id: "completed", value: " ✔ 완료된 항목" },
+    { id: "incomplete", value: "❌ 미완료 항목" },
+    { id: "expired", value: "⏰ 기한 만료" },
+  ];
   const maxLength = 15;
   const [todos, setTodos] = useState(initialTodos);
   const [inputVal, setInputVal] = useState(inputInitial);
   // 여러 개의 input을 참조하기 위한 객체
   const inputRefs = useRef({});
   const [masterCheck, setMasterCheck] = useState(false);
-  const [categoryVal, setCategoryVal] = useState("");
-  const [categories, setCategories] = useState(initialCategories);
+  const [category, setCategory] = useState(initialCategories);
+  const [dateConfirm, setDateConfirm] = useState(false);
 
-  const [filteredTodos, setFilteredTodos] = useState(todos); // 필터링 목록 상태
+  const [selectedCategory, setSelectedCategory] = useState("카테고리 선택");
+  const [isOpen, setIsOpen] = useState(false);
+
+  const newDate = new Date();
+  const currentDate = {
+    mon: newDate.getMonth() + 1,
+    day: newDate.getDate(),
+  };
   const isEditing = todos.some((todo) => todo.edit);
 
   // todos가 변경될 때 마다 localstorage, filteredTodos 업데이트
   useEffect(() => {
     localStorage.setItem("myTodos", JSON.stringify(todos));
-    setFilteredTodos(todos);
   }, [todos]);
 
   // 글자 수 제한 함수
@@ -53,21 +65,28 @@ const Todo = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const inputMon = Number(inputVal.date.mon);
+    const inputDay = Number(inputVal.date.day);
     if (checkLength(inputVal.todo.length) || inputVal.todo.trim() === "")
       return;
+    if (currentDate.mon > inputMon) {
+      return alert("날짜(월)를 다시 입력해 주세요.");
+    } else if (currentDate.mon === inputMon && currentDate.day > inputDay) {
+      return alert("날짜(일)를 다시 입력해 주세요.");
+    }
     const newTodo = {
       id: Math.random().toString(),
       todo: inputVal.todo,
       date: inputVal.date,
       checked: false,
       edit: false,
-      category: categoryVal,
+      category: selectedCategory,
     };
     console.log(newTodo);
 
     setTodos((prev) => [newTodo, ...prev]);
     setInputVal(inputInitial);
-    setCategoryVal("");
+    setSelectedCategory("카테고리 선택");
   };
 
   const onChangeInput = (e) => {
@@ -135,27 +154,57 @@ const Todo = () => {
   }, [todos]);
 
   const handleMasterCheck = () => {
-    // 모든 항목이 체크되어 있는지 확인
-    const allChecked = todos.every((todo) => todo.checked);
-    // 하나라도 해제 상태면 전체 체크, 그렇지 않으면 전체 해제
-    const newCheckState = !allChecked;
+    // 기한이 남아 있는 Todo 필터링
+    const availableTodos = todos.filter((todo) => {
+      const todoMonth = Number(todo.date.mon);
+      const todoDay = Number(todo.date.day);
 
-    setMasterCheck(newCheckState);
-    setTodos((prev) => {
-      const updatedTodos = prev.map((todo) => ({
-        ...todo,
-        checked: newCheckState,
-      }));
-
-      localStorage.setItem("myTodos", JSON.stringify(updatedTodos));
-      return updatedTodos;
+      return (
+        todoMonth > currentDate.mon || // 미래 날짜
+        (todoMonth === currentDate.mon && todoDay >= currentDate.day) // 같은 달이면 오늘 이후 날짜만
+      );
     });
-  };
 
-  const handleCategoryChange = (e) => {
-    setCategoryVal(e.target.value);
-  };
+    // 체크 가능한 항목이 모두 체크 상태인지 확인 (모두 체크 -> 해제, 아니면 체크)
+    const allAvailableChecked = availableTodos.every((todo) => todo.checked);
+    const newCheckState = !allAvailableChecked; // 토글 기능 구현
 
+    // todos 업데이트 (기한이 남은 항목만 checked 상태 변경)
+    const updatedTodos = todos.map((todo) => {
+      const todoMonth = Number(todo.date.mon);
+      const todoDay = Number(todo.date.day);
+      const isExpired =
+        todoMonth < currentDate.mon ||
+        (todoMonth === currentDate.mon && todoDay < currentDate.day);
+
+      return isExpired ? todo : { ...todo, checked: newCheckState }; // 기한이 지난 항목은 변경 X
+    });
+
+    setTodos(updatedTodos); // 상태 업데이트
+    setMasterCheck(newCheckState); // 마스터 체크 상태 즉시 반영
+  };
+  useEffect(() => {
+    // 기한이 남아 있는 항목들만 대상으로 masterCheck 상태 갱신
+    const availableTodos = todos.filter((todo) => {
+      const todoMonth = Number(todo.date.mon);
+      const todoDay = Number(todo.date.day);
+
+      return (
+        todoMonth > currentDate.mon ||
+        (todoMonth === currentDate.mon && todoDay >= currentDate.day)
+      );
+    });
+
+    // 모든 기한이 남은 항목이 체크 상태면 masterCheck도 체크 상태로 변경
+    setMasterCheck(
+      availableTodos.length > 0 && availableTodos.every((todo) => todo.checked)
+    );
+  }, [todos]);
+
+  const handleSelect = (category) => {
+    setSelectedCategory(category);
+    setIsOpen(false); // 선택 후 리스트 닫기
+  };
   return (
     <>
       <S.RootContainer>
@@ -166,11 +215,14 @@ const Todo = () => {
             inputVal={inputVal}
             onChangeDate={onChangeDate}
             maxLength={maxLength}
-            categoryVal={categoryVal}
-            handleCategoryChange={handleCategoryChange}
+            category={category}
+            setIsOpen={setIsOpen}
+            handleSelect={handleSelect}
+            selectedCategory={selectedCategory}
+            isOpen={isOpen}
           />
           <TodoList
-            todos={filteredTodos}
+            todos={todos}
             inputRefs={inputRefs}
             maxLength={maxLength}
             handleChecked={handleChecked}
@@ -180,10 +232,40 @@ const Todo = () => {
             isEditing={isEditing}
             masterCheck={masterCheck}
             handleMasterCheck={handleMasterCheck}
+            currentDate={currentDate}
+            dateConfirm={dateConfirm}
+            setDateConfirm={setDateConfirm}
           />
         </S.TodoContainer>
-
-        <SideBar categories={categories} />
+        <S.SideBarContainer>
+          <S.FilterContainer>
+            <S.FilterTitle>FILTER</S.FilterTitle>
+            <S.FilterUl>
+              {filters.map((list) => {
+                return (
+                  <S.FilterList key={list.id}>
+                    <S.FilterCheckbox type="checkbox" name={list.id} />
+                    <S.SideBarLiText>{list.value}</S.SideBarLiText>
+                  </S.FilterList>
+                );
+              })}
+            </S.FilterUl>
+          </S.FilterContainer>
+          <S.CategoryContainer>
+            <S.CategoryTitle>CATEGORY</S.CategoryTitle>
+            <S.FilterUl>
+              {category.map((list) => {
+                return (
+                  <S.CategoryList key={list.id}>
+                    <S.FilterCheckbox type="checkbox" name={list.id} />
+                    <S.SideBarLiText>{list.value}</S.SideBarLiText>
+                  </S.CategoryList>
+                );
+              })}
+            </S.FilterUl>
+          </S.CategoryContainer>
+        </S.SideBarContainer>
+        {/* <SideBar categories={categories} filters={filters} /> */}
       </S.RootContainer>
     </>
   );

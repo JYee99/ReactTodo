@@ -12,6 +12,9 @@ const TodoList = ({
   isEditing,
   masterCheck,
   handleMasterCheck,
+  currentDate,
+  dateConfirm,
+  setDateConfirm,
 }) => {
   return (
     <S.ListContainer>
@@ -22,11 +25,12 @@ const TodoList = ({
           onChange={handleMasterCheck}
         />
         <S.TopTextDate>기한</S.TopTextDate>
+        <S.TopTextDate>중요도</S.TopTextDate>
         <S.TopTextTodos>할 일</S.TopTextTodos>
-        <S.TopText>수정 / 삭제</S.TopText>
+        <S.TopBtnText>수정 / 삭제</S.TopBtnText>
       </S.TopContainer>
       <S.LiustUl>
-        {todos.map((todo) => (
+        {todos?.map((todo) => (
           <TodoItem
             key={todo.id}
             todo={todo}
@@ -36,6 +40,9 @@ const TodoList = ({
             handleEdit={handleEdit}
             handleDelete={handleDelete}
             isEditing={isEditing}
+            currentDate={currentDate}
+            dateConfirm={dateConfirm}
+            setDateConfirm={setDateConfirm}
           />
         ))}
       </S.LiustUl>

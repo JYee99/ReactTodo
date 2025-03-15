@@ -6,18 +6,34 @@ const TodoForm = ({
   inputVal,
   maxLength,
   onChangeDate,
-  categoryVal,
-  handleCategoryChange,
+  category,
+  selectedCategory,
+  setIsOpen,
+  isOpen,
+  handleSelect,
 }) => {
   return (
     <>
       <S.Form onSubmit={handleSubmit}>
         <S.InputContainer>
-          <S.CategorieInput
-            placeholder="카테고리 추가"
-            value={categoryVal}
-            onChange={handleCategoryChange}
-          />
+          <S.DropDownContainer>
+            <S.SelectedCategory onClick={() => setIsOpen(!isOpen)}>
+              {selectedCategory}
+              <S.Arrow $isOpen={isOpen}>▼</S.Arrow>
+              {isOpen && (
+                <S.DropdownUl>
+                  {category.map((category) => (
+                    <S.DropDownList
+                      key={category.id}
+                      onClick={() => handleSelect(category.value)}
+                    >
+                      {category.value}
+                    </S.DropDownList>
+                  ))}
+                </S.DropdownUl>
+              )}
+            </S.SelectedCategory>
+          </S.DropDownContainer>
           <S.DateContainer>
             <S.MonInput
               name="mon"
