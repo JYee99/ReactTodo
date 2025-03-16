@@ -7,7 +7,7 @@ const TodoForm = ({
   maxLength,
   onChangeDate,
   category,
-  selectedCategory,
+  inputCategory,
   setIsOpen,
   isOpen,
   handleSelect,
@@ -18,7 +18,7 @@ const TodoForm = ({
         <S.InputContainer>
           <S.DropDownContainer>
             <S.SelectedCategory onClick={() => setIsOpen(!isOpen)}>
-              {selectedCategory}
+              {inputCategory}
               <S.Arrow $isOpen={isOpen}>▼</S.Arrow>
               {isOpen && (
                 <S.DropdownUl>

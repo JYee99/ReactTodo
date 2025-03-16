@@ -216,6 +216,13 @@ export const ListDeleteBtn = styled.button`
   }
 `;
 
+export const NoTodos = styled.p`
+  font-size: 1rem;
+  font-weight: bold;
+  margin-top: 20px;
+  text-align: center;
+`;
+
 // sidbar
 export const SideBarContainer = styled.div`
   padding: 20px 10px;

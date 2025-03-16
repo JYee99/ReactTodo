@@ -36,8 +36,11 @@ const Todo = () => {
   const [category, setCategory] = useState(initialCategories);
   const [dateConfirm, setDateConfirm] = useState(false);
 
-  const [selectedCategory, setSelectedCategory] = useState("카테고리 선택");
+  const [inputCategory, setInputCategory] = useState("카테고리 선택");
   const [isOpen, setIsOpen] = useState(false);
+
+  const [selectedCategory, setSelectedCategory] = useState([]);
+  const [fileredTodos, setFilteredTodos] = useState(initialTodos);
 
   const newDate = new Date();
   const currentDate = {
@@ -46,11 +49,9 @@ const Todo = () => {
   };
   const isEditing = todos.some((todo) => todo.edit);
 
-  // todos가 변경될 때 마다 localstorage, filteredTodos 업데이트
-  useEffect(() => {
+  const updateTodosLocal = () => {
     localStorage.setItem("myTodos", JSON.stringify(todos));
-  }, [todos]);
-
+  };
   // 글자 수 제한 함수
   const checkLength = (length) => {
     if (length > maxLength) {
@@ -80,13 +81,12 @@ const Todo = () => {
       date: inputVal.date,
       checked: false,
       edit: false,
-      category: selectedCategory,
+      category: inputCategory,
     };
-    console.log(newTodo);
-
+    updateTodosLocal();
     setTodos((prev) => [newTodo, ...prev]);
     setInputVal(inputInitial);
-    setSelectedCategory("카테고리 선택");
+    setInputCategory("카테고리 선택");
   };
 
   const onChangeInput = (e) => {
@@ -132,6 +132,7 @@ const Todo = () => {
         inputRefs.current[id].focus();
       }
     }, 0);
+    updateTodosLocal();
   };
 
   const handleEditInput = (e, id) => {
@@ -147,6 +148,7 @@ const Todo = () => {
     // filter() 함수는 배열을 순회하면서 조건에 맞는 요소만 새로운 배열로 반환함
     // todo.id !== id가 true인 요소만 유지하고, 일치하는 id를 가진 요소는 제거됨
     setTodos((prev) => prev.filter((todo) => todo.id !== id));
+    updateTodosLocal();
   };
 
   useEffect(() => {
@@ -180,8 +182,8 @@ const Todo = () => {
       return isExpired ? todo : { ...todo, checked: newCheckState }; // 기한이 지난 항목은 변경 X
     });
 
-    setTodos(updatedTodos); // 상태 업데이트
-    setMasterCheck(newCheckState); // 마스터 체크 상태 즉시 반영
+    setTodos(updatedTodos);
+    setMasterCheck(newCheckState);
   };
   useEffect(() => {
     // 기한이 남아 있는 항목들만 대상으로 masterCheck 상태 갱신
@@ -199,12 +201,33 @@ const Todo = () => {
     setMasterCheck(
       availableTodos.length > 0 && availableTodos.every((todo) => todo.checked)
     );
-  }, [todos]);
+    updateTodosLocal();
+  }, [masterCheck]);
 
   const handleSelect = (category) => {
-    setSelectedCategory(category);
+    setInputCategory(category);
     setIsOpen(false); // 선택 후 리스트 닫기
   };
+
+  const handleCategoryClick = (value) => {
+    setSelectedCategory((prev) => {
+      if (prev.includes(value)) {
+        return prev.filter((category) => category !== value);
+      } else {
+        return [...prev, value];
+      }
+    });
+  };
+  useEffect(() => {
+    if (selectedCategory.length === 0) {
+      setFilteredTodos(todos);
+    } else {
+      setFilteredTodos(
+        todos.filter((todo) => selectedCategory.includes(todo.category))
+      );
+    }
+  }, [selectedCategory, todos]);
+
   return (
     <>
       <S.RootContainer>
@@ -218,11 +241,11 @@ const Todo = () => {
             category={category}
             setIsOpen={setIsOpen}
             handleSelect={handleSelect}
-            selectedCategory={selectedCategory}
+            inputCategory={inputCategory}
             isOpen={isOpen}
           />
           <TodoList
-            todos={todos}
+            todos={fileredTodos}
             inputRefs={inputRefs}
             maxLength={maxLength}
             handleChecked={handleChecked}
@@ -257,7 +280,11 @@ const Todo = () => {
               {category.map((list) => {
                 return (
                   <S.CategoryList key={list.id}>
-                    <S.FilterCheckbox type="checkbox" name={list.id} />
+                    <S.FilterCheckbox
+                      type="checkbox"
+                      name={list.id}
+                      onClick={() => handleCategoryClick(list.value)}
+                    />
                     <S.SideBarLiText>{list.value}</S.SideBarLiText>
                   </S.CategoryList>
                 );

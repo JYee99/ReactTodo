@@ -45,6 +45,7 @@ const TodoList = ({
             setDateConfirm={setDateConfirm}
           />
         ))}
+        {todos.length === 0 && <S.NoTodos>등록된 할 일이 없습니다.</S.NoTodos>}
       </S.LiustUl>
     </S.ListContainer>
   );
