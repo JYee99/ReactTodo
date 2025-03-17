@@ -36,9 +36,9 @@ const TodoItem = ({
 
   useEffect(() => {
     if (masterCheck) {
-      handleChecked(todo.id, true);
+      handleChecked(todo.id);
     } else {
-      handleChecked(todo.id, false);
+      handleChecked(todo.id);
     }
   }, [masterCheck]);
   return (

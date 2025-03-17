@@ -167,9 +167,7 @@ const Todo = () => {
       );
     });
 
-    // 체크 가능한 항목이 모두 체크 상태인지 확인 (모두 체크 -> 해제, 아니면 체크)
-    const allAvailableChecked = availableTodos.every((todo) => todo.checked);
-    const newCheckState = !allAvailableChecked; // 토글 기능 구현
+    const newCheckState = availableTodos.some((todo) => !todo.checked);
 
     // todos 업데이트 (기한이 남은 항목만 checked 상태 변경)
     const updatedTodos = todos.map((todo) => {
