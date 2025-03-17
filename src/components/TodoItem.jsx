@@ -34,13 +34,6 @@ const TodoItem = ({
     dayChecked();
   }, []);
 
-  useEffect(() => {
-    if (masterCheck) {
-      handleChecked(todo.id);
-    } else {
-      handleChecked(todo.id);
-    }
-  }, [masterCheck]);
   return (
     <S.ListLi key={todo.id}>
       <S.ListCheckBox
