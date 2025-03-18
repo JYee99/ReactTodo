@@ -42,39 +42,75 @@ const Todo = () => {
   const [selectedCategory, setSelectedCategory] = useState([]);
   const [fileredTodos, setFilteredTodos] = useState(initialTodos);
 
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isError, setIsError] = useState(false);
+
   const newDate = new Date();
   const currentDate = {
     mon: newDate.getMonth() + 1,
     day: newDate.getDate(),
   };
+  // 현재 달의 마지막 날짜 구하기
+  const year = newDate.getFullYear();
+  const lastDay = new Date(year, currentDate.mon, 0).getDate();
+  console.log(lastDay);
+
+  // error modal on 함수
+  const errorModalOn = (message) => {
+    setErrorMessage(message);
+    setIsError(true);
+  };
+  // error modal off 함수
+  const errorModalOff = () => {
+    setErrorMessage("");
+    setIsError(false);
+  };
+  // 글자 수 제한 함수
+  const checkLength = (length) => {
+    if (length > maxLength) {
+      errorModalOn("15글자 이내로 작성해 주세요.");
+      return;
+    }
+    if (length < 1) {
+      errorModalOn("1글자 이상 작성해 주세요.");
+      return;
+    }
+  };
+
+  // 날짜 입력 checked
+  const checkedDate = (todoDate) => {
+    const mon = Number(todoDate.mon);
+    const day = Number(todoDate.day);
+    if (mon > 12) {
+      errorModalOn("1월 ~ 12월로 다시 입력해 주세요.");
+      return;
+    } else if (day > lastDay) {
+      errorModalOn(`1일 ~ ${lastDay}일로 다시 입력해 주세요.`);
+      return;
+    }
+  };
+  const checkedDateLength = () => {
+    const mon = Number(inputVal.date.mon);
+    const day = Number(inputVal.date.day);
+    if (checkLength(inputVal.todo.length) || inputVal.todo.trim() === "")
+      return;
+    if (currentDate.mon > mon) {
+      return errorModalOn("날짜(월)를 다시 입력해 주세요.");
+    } else if (currentDate.mon === mon && currentDate.day > day) {
+      return errorModalOn("날짜(일)를 다시 입력해 주세요.");
+    }
+  };
+
   const isEditing = todos.some((todo) => todo.edit);
 
   const updateTodosLocal = () => {
     localStorage.setItem("myTodos", JSON.stringify(todos));
   };
-  // 글자 수 제한 함수
-  const checkLength = (length) => {
-    if (length > maxLength) {
-      alert("15글자 이내로 작성해 주세요.");
-      return;
-    }
-    if (length < 1) {
-      alert("1글자 이상 작성해 주세요.");
-      return;
-    }
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const inputMon = Number(inputVal.date.mon);
-    const inputDay = Number(inputVal.date.day);
-    if (checkLength(inputVal.todo.length) || inputVal.todo.trim() === "")
-      return;
-    if (currentDate.mon > inputMon) {
-      return alert("날짜(월)를 다시 입력해 주세요.");
-    } else if (currentDate.mon === inputMon && currentDate.day > inputDay) {
-      return alert("날짜(일)를 다시 입력해 주세요.");
-    }
+    if (checkedDate(inputVal.date) || checkedDateLength()) return;
+
     const newTodo = {
       id: Math.random().toString(),
       todo: inputVal.todo,
@@ -83,6 +119,7 @@ const Todo = () => {
       edit: false,
       category: inputCategory,
     };
+
     updateTodosLocal();
     setTodos((prev) => [newTodo, ...prev]);
     setInputVal(inputInitial);
@@ -229,6 +266,14 @@ const Todo = () => {
   return (
     <>
       <S.RootContainer>
+        {isError ? (
+          <S.ErrorBackDrop>
+            <S.ErrorModal>
+              <S.ErrorModalText>{errorMessage}</S.ErrorModalText>
+              <S.ErrorModalbtn onClick={errorModalOff}>확인</S.ErrorModalbtn>
+            </S.ErrorModal>
+          </S.ErrorBackDrop>
+        ) : null}
         <S.TodoContainer>
           <TodoForm
             handleSubmit={handleSubmit}

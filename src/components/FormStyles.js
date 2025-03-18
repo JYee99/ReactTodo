@@ -278,3 +278,41 @@ export const SideBarLiText = styled.p`
   margin: 0;
   font-size: 0.8rem;
 `;
+
+// error modal
+export const ErrorBackDrop = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  background-color: rgba(0, 0, 0, 0.45);
+`;
+export const ErrorModal = styled.div`
+  background-color: white;
+  width: 350px;
+  height: 180px;
+  margin-top: 200px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px;
+  box-shadow: 2px 5px 10px rgba(0, 0, 0, 0.25);
+`;
+export const ErrorModalText = styled.span`
+  font-size: 1rem;
+  margin-bottom: 25px;
+  margin-top: 60px;
+`;
+export const ErrorModalbtn = styled.button`
+  font-size: 0.85rem;
+  border: 1px solid green;
+  color: green;
+  padding: 8px 20px;
+  transition: all 0.15s ease-in-out;
+  border-radius: 3px;
+  &:hover {
+    background-color: green;
+    color: white;
+  }
+`;
