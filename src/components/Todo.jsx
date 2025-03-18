@@ -69,12 +69,13 @@ const Todo = () => {
   const checkLength = (length) => {
     if (length > maxLength) {
       errorModalOn("15글자 이내로 작성해 주세요.");
-      return;
+      return false;
     }
     if (length < 1) {
       errorModalOn("1글자 이상 작성해 주세요.");
-      return;
+      return false;
     }
+    return true;
   };
 
   // 날짜 입력 checked
@@ -83,22 +84,40 @@ const Todo = () => {
     const day = Number(todoDate.day);
     if (mon > 12) {
       errorModalOn("1월 ~ 12월로 다시 입력해 주세요.");
-      return;
-    } else if (day > lastDay) {
-      errorModalOn(`1일 ~ ${lastDay}일로 다시 입력해 주세요.`);
-      return;
+      return false;
     }
+    if (day > lastDay) {
+      errorModalOn(`1일 ~ ${lastDay}일로 다시 입력해 주세요.`);
+      return false;
+    }
+    return true;
   };
+
   const checkedDateLength = () => {
     const mon = Number(inputVal.date.mon);
     const day = Number(inputVal.date.day);
-    if (checkLength(inputVal.todo.length) || inputVal.todo.trim() === "")
-      return;
-    if (currentDate.mon > mon) {
-      return errorModalOn("날짜(월)를 다시 입력해 주세요.");
-    } else if (currentDate.mon === mon && currentDate.day > day) {
-      return errorModalOn("날짜(일)를 다시 입력해 주세요.");
+    if (!checkLength(inputVal.todo.length) || inputVal.todo.trim() === "") {
+      return false;
     }
+    if (currentDate.mon > mon) {
+      errorModalOn("날짜(월)를 다시 입력해 주세요.");
+      return false;
+    }
+    if (currentDate.mon === mon && currentDate.day > day) {
+      errorModalOn("날짜(일)를 다시 입력해 주세요.");
+      return false;
+    }
+    return true;
+  };
+
+  // category check 함수
+  const checkedCatefory = (category) => {
+    if (category === "카테고리 선택") {
+      setErrorMessage("카테고리를 선택해 주세요.");
+      setIsError(true);
+      return false;
+    }
+    return true;
   };
 
   const isEditing = todos.some((todo) => todo.edit);
@@ -109,7 +128,13 @@ const Todo = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (checkedDate(inputVal.date) || checkedDateLength()) return;
+    if (
+      !checkedDate(inputVal.date) ||
+      !checkedDateLength() ||
+      !checkedCatefory(inputCategory)
+    ) {
+      return;
+    }
 
     const newTodo = {
       id: Math.random().toString(),
